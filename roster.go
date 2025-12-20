@@ -13,6 +13,10 @@ type Roster struct {
 	characterIndex map[string]*Role
 }
 
+func (r *Roster) GetCharacterById(id string) Role {
+	return *r.characterIndex[id]
+}
+
 func (r *Roster) UnmarshalJSON(b []byte) error {
 	var items []any
 	err := json.Unmarshal(b, &items)
