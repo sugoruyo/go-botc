@@ -29,4 +29,8 @@ go.work.sum
 
 # Editor/IDE
 # .idea/
-# .vscode/
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
