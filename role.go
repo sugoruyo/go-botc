@@ -126,9 +126,8 @@ func (r *Role) Setup() string {
 	return r.Ability[pos+1 : len(r.Ability)-1]
 }
 
-func (r *Role) JinxWith(c *Role) (string, bool) {
-	otherId := c.Id
-	text, found := r.Jinxes[otherId]
+func (r *Role) JinxWith(o *Role) (string, bool) {
+	text, found := r.Jinxes[o.Id]
 	return text, found
 }
 

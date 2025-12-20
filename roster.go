@@ -10,11 +10,7 @@ type Roster struct {
 	Name           string `json:"name"`
 	Almanac        string `json:"almanac"`
 	Characters     []*Role
-	characterIndex map[string]*Role
-}
-
-func (r *Roster) GetCharacterById(id string) Role {
-	return *r.characterIndex[id]
+	CharacterIndex map[string]*Role
 }
 
 func (r *Roster) UnmarshalJSON(b []byte) error {
@@ -38,7 +34,7 @@ func (r *Roster) UnmarshalJSON(b []byte) error {
 					return err
 				}
 				r.Characters = append(r.Characters, &role)
-				r.characterIndex[role.Id] = &role
+				r.CharacterIndex[role.Id] = &role
 			}
 		}
 	}
