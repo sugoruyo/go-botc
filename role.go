@@ -73,6 +73,10 @@ type Role struct {
 	Jinxes             map[string]string `json:"jinxes"`
 }
 
+func (r *Role) GetName() string {
+	return r.Name
+}
+
 func (r *Role) Type() string {
 	return r.Team.Name()
 }
@@ -129,6 +133,14 @@ func (r *Role) Setup() string {
 func (r *Role) JinxWith(o *Role) (string, bool) {
 	text, found := r.Jinxes[o.Id]
 	return text, found
+}
+
+func (r *Role) GetFirstNightOrder() int {
+	return r.FirstNightOrder
+}
+
+func (r *Role) GetOtherNightsOrder() int {
+	return r.OtherNightOrder
 }
 
 func (r *Role) Wiki() string {
@@ -211,11 +223,15 @@ func NewRole(m map[string]any) (Role, error) {
 	}
 	r.Ability = ability
 
-	firstNight, _, err := extractInt("firstNight", m)
+	firstNight, found, err := extractInt("firstNight", m)
 	if err != nil {
 		return r, err
 	}
-	r.FirstNightOrder = firstNight
+	if !found {
+		r.FirstNightOrder = -1
+	} else {
+		r.FirstNightOrder = firstNight
+	}
 
 	firstNightReminder, _, err := extractString("firstNightReminder", m)
 	if err != nil {
@@ -223,11 +239,15 @@ func NewRole(m map[string]any) (Role, error) {
 	}
 	r.FirstNightReminder = firstNightReminder
 
-	otherNight, _, err := extractInt("otherNight", m)
+	otherNight, found, err := extractInt("otherNight", m)
 	if err != nil {
 		return r, err
 	}
-	r.OtherNightOrder = otherNight
+	if !found {
+		r.OtherNightOrder = -1
+	} else {
+		r.OtherNightOrder = otherNight
+	}
 
 	otherNightReminder, _, err := extractString("otherNightReminder", m)
 	if err != nil {
@@ -247,7 +267,7 @@ func NewRole(m map[string]any) (Role, error) {
 	}
 	r.ReminderTokens = reminders
 
-	alters, err := extractRequiredBool("setup", m)
+	alters, _, err := extractBool("setup", m)
 	if err != nil {
 		return r, err
 	}
@@ -306,7 +326,7 @@ func extractRoleImageUrls(m map[string]any) ([]string, error) {
 	key := "image"
 	urls, ok, err := extractStringSlice(key, m)
 	if !ok {
-		return []string{}, &RequiredFieldMissingError{key}
+		return []string{}, nil
 	}
 	if err != nil {
 		return urls, err

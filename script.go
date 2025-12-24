@@ -7,17 +7,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"maps"
 	"net/url"
 	"slices"
 )
 
-const (
-	Dusk       string = "dusk"
-	MinionInfo string = "minioninfo"
-	DemonInfo  string = "demoninfo"
-	Dawn       string = "dawn"
-)
+type NightOrdered interface {
+	GetName() string
+	GetFirstNightOrder() int
+	GetOtherNightsOrder() int
+}
 
 type ScriptMeta struct {
 	Id         string   `json:"id"`
@@ -56,18 +54,38 @@ func (s *Script) PopulateIndex(r Roster) {
 	}
 }
 
-func (s *Script) FirstNightOrder(originals []*Role) []*Role {
-	var order []*Role
-	slices.SortFunc(slices.Collect(maps.Values(s.Index)), func(a, b *Role) int {
-		return a.FirstNightOrder - b.FirstNightOrder
+func (s *Script) GetCharacter(id string) Role {
+	return *s.Index[id]
+}
+
+func (s *Script) FirstNight(originals []*Role) []NightOrdered {
+	order := make([]NightOrdered, 0)
+	for e := range firstNight {
+		order = append(order, e)
+	}
+	for _, role := range s.Index {
+		if role.FirstNightOrder != -1 {
+			order = append(order, role)
+		}
+	}
+	slices.SortFunc(order, func(a, b NightOrdered) int {
+		return a.GetFirstNightOrder() - b.GetFirstNightOrder()
 	})
 	return order
 }
 
-func (s *Script) OtherNightOrder(originals []*Role) []*Role {
-	var order []*Role
-	slices.SortFunc(slices.Collect(maps.Values(s.Index)), func(a, b *Role) int {
-		return a.OtherNightOrder - b.OtherNightOrder
+func (s *Script) OtherNights(originals []*Role) []NightOrdered {
+	order := make([]NightOrdered, 0)
+	for e := range otherNights {
+		order = append(order, e)
+	}
+	for _, role := range s.Index {
+		if role.OtherNightOrder != -1 {
+			order = append(order, role)
+		}
+	}
+	slices.SortFunc(order, func(a, b NightOrdered) int {
+		return a.GetOtherNightsOrder() - b.GetOtherNightsOrder()
 	})
 	return order
 }
@@ -121,6 +139,7 @@ func (s *Script) UnmarshalJSON(data []byte) error {
 			}
 		}
 	}
+	s.Index = make(map[string]*Role)
 	return nil
 }
 
