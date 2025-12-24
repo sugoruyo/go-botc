@@ -14,6 +14,7 @@ type Roster struct {
 }
 
 func (r *Roster) UnmarshalJSON(b []byte) error {
+	r.CharacterIndex = make(map[string]*Role)
 	var items []any
 	err := json.Unmarshal(b, &items)
 	if err != nil {

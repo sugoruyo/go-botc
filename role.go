@@ -290,12 +290,12 @@ func extractRoleId(m map[string]any) (string, error) {
 
 func extractRoleEdition(m map[string]any) (Edition, error) {
 	key := "edition"
-	ed, err := extractRequiredString(key, m)
-	if err != nil {
-		return Edition(""), err
-	}
+	ed, found, err := extractString(key, m)
 	edition := Edition(ed)
-	if slices.Contains(EditionOrder, edition) {
+	if err != nil {
+		return edition, err
+	}
+	if !found || slices.Contains(EditionOrder, edition) {
 		return edition, nil
 	} else {
 		return Edition(""), NewIllegalValueForEnumError(key, edition, EditionOrder)
