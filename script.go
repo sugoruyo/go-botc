@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"maps"
 	"net/url"
+	"slices"
 )
 
 const (
@@ -31,9 +33,10 @@ type ScriptMeta struct {
 }
 
 type Script struct {
-	Meta                 ScriptMeta `json:"meta"`
-	CustomCharacters     []Role     `json:"custom"`
-	OriginalCharacterIds []string   `json:"original"`
+	Meta                 ScriptMeta       `json:"meta"`
+	CustomCharacters     []Role           `json:"custom"`
+	OriginalCharacterIds []string         `json:"original"`
+	Index                map[string]*Role `json:"index"`
 }
 
 func (s *Script) Author() string {
@@ -42,6 +45,31 @@ func (s *Script) Author() string {
 	} else {
 		return "Unknown"
 	}
+}
+
+func (s *Script) PopulateIndex(r Roster) {
+	for _, o := range s.OriginalCharacterIds {
+		s.Index[o] = r.CharacterIndex[o]
+	}
+	for _, c := range s.CustomCharacters {
+		s.Index[c.Id] = &c
+	}
+}
+
+func (s *Script) FirstNightOrder(originals []*Role) []*Role {
+	var order []*Role
+	slices.SortFunc(slices.Collect(maps.Values(s.Index)), func(a, b *Role) int {
+		return a.FirstNightOrder - b.FirstNightOrder
+	})
+	return order
+}
+
+func (s *Script) OtherNightOrder(originals []*Role) []*Role {
+	var order []*Role
+	slices.SortFunc(slices.Collect(maps.Values(s.Index)), func(a, b *Role) int {
+		return a.OtherNightOrder - b.OtherNightOrder
+	})
+	return order
 }
 
 func (s *Script) OfficialToolUrl() string {
