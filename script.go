@@ -58,7 +58,7 @@ func (s *Script) GetCharacter(id string) Role {
 	return *s.Index[id]
 }
 
-func (s *Script) FirstNight(originals []*Role) []NightOrdered {
+func (s *Script) FirstNight() []NightOrdered {
 	order := make([]NightOrdered, 0)
 	for e := range firstNight {
 		order = append(order, e)
@@ -74,7 +74,7 @@ func (s *Script) FirstNight(originals []*Role) []NightOrdered {
 	return order
 }
 
-func (s *Script) OtherNights(originals []*Role) []NightOrdered {
+func (s *Script) OtherNights() []NightOrdered {
 	order := make([]NightOrdered, 0)
 	for e := range otherNights {
 		order = append(order, e)

@@ -38,11 +38,11 @@ func main() {
 	}
 	s.PopulateIndex(r)
 	fmt.Println("First Night Order:")
-	for i, j := range s.FirstNight(r.Characters) {
+	for i, j := range s.FirstNight() {
 		fmt.Printf("%02d. %s\n", i+1, j.GetName())
 	}
 	fmt.Println("Other Night Order:")
-	for i, j := range s.OtherNights(r.Characters) {
+	for i, j := range s.OtherNights() {
 		fmt.Printf("%02d. %s\n", i+1, j.GetName())
 	}
 	fmt.Println("Characters")
