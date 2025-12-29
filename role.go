@@ -300,12 +300,9 @@ func extractRoleId(m map[string]any) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	pos := strings.Index(id, "_")
-	if pos > 0 {
-		return id[:pos], nil
-	} else {
-		return id, nil
-	}
+	id, _ = strings.CutSuffix(id, "_rah")
+	id = strings.ReplaceAll(id, "_", "")
+	return id, nil
 }
 
 func extractRoleEdition(m map[string]any) (Edition, error) {
