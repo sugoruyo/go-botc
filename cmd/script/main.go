@@ -37,6 +37,7 @@ func main() {
 		fmt.Printf("Learn more at %s\n", s.Meta.Almanac)
 	}
 	s.PopulateIndex(r)
+	fmt.Println(s.Index)
 	fmt.Println("First Night Order:")
 	for i, j := range s.FirstNight() {
 		fmt.Printf("%02d. %s\n", i+1, j.GetName())
