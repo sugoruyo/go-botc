@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/url"
 	"slices"
+	"strings"
 )
 
 type NightOrdered interface {
@@ -45,13 +46,19 @@ func (s *Script) Author() string {
 	}
 }
 
-func (s *Script) PopulateIndex(r Roster) {
+func (s *Script) PopulateIndex(r Roster) []string {
+	notFound := make([]string, 0)
 	for _, o := range s.OriginalCharacterIds {
-		s.Index[o] = r.CharacterIndex[o]
+		orig, ok := r.CharacterIndex[o]
+		if !ok {
+			notFound = append(notFound, o)
+		}
+		s.Index[o] = orig
 	}
 	for _, c := range s.CustomCharacters {
 		s.Index[c.Id] = &c
 	}
+	return notFound
 }
 
 func (s *Script) GetCharacter(id string) Role {
@@ -116,7 +123,7 @@ func (s *Script) UnmarshalJSON(data []byte) error {
 	for _, v := range raw {
 		switch vt := v.(type) {
 		case string:
-			s.OriginalCharacterIds = append(s.OriginalCharacterIds, vt)
+			s.OriginalCharacterIds = append(s.OriginalCharacterIds, strings.ReplaceAll(vt, "_", ""))
 		case map[string]any:
 			if vt["id"] == "_meta" {
 				s.Meta.Id = vt["id"].(string)
@@ -128,7 +135,7 @@ func (s *Script) UnmarshalJSON(data []byte) error {
 				s.Meta.OtherNight = checkNilStringS(vt["otherNight"])
 			} else {
 				if len(vt) == 1 {
-					s.OriginalCharacterIds = append(s.OriginalCharacterIds, vt["id"].(string))
+					s.OriginalCharacterIds = append(s.OriginalCharacterIds, strings.ReplaceAll(vt["id"].(string), "_", ""))
 				} else {
 					role, err := NewRole(vt)
 					if err != nil {

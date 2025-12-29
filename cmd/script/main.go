@@ -36,8 +36,10 @@ func main() {
 	if s.Meta.Almanac != "" {
 		fmt.Printf("Learn more at %s\n", s.Meta.Almanac)
 	}
-	s.PopulateIndex(r)
-	fmt.Println(s.Index)
+	missing := s.PopulateIndex(r)
+	if len(missing) > 0 {
+		fmt.Printf("Missing originals: %s", strings.Join(missing, ", "))
+	}
 	fmt.Println("First Night Order:")
 	for i, j := range s.FirstNight() {
 		fmt.Printf("%02d. %s\n", i+1, j.GetName())

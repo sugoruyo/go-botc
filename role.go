@@ -296,13 +296,12 @@ func NewRole(m map[string]any) (Role, error) {
 
 func extractRoleId(m map[string]any) (string, error) {
 	key := "id"
-	id, err := extractRequiredString(key, m)
+	extracted, err := extractRequiredString(key, m)
 	if err != nil {
 		return "", err
 	}
-	id, _ = strings.CutSuffix(id, "_rah")
-	id = strings.ReplaceAll(id, "_", "")
-	return id, nil
+	extracted, _ = strings.CutSuffix(extracted, "_rah")
+	return extracted, nil
 }
 
 func extractRoleEdition(m map[string]any) (Edition, error) {
