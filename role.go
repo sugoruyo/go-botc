@@ -294,6 +294,12 @@ func NewRole(m map[string]any) (Role, error) {
 	return r, nil
 }
 
+func normaliseId(id string) string {
+	return strings.ToLower(
+		strings.ReplaceAll(id, "_", ""),
+	)
+}
+
 func extractRoleId(m map[string]any) (string, error) {
 	key := "id"
 	extracted, err := extractRequiredString(key, m)

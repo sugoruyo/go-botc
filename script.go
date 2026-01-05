@@ -135,7 +135,7 @@ func (s *Script) UnmarshalJSON(data []byte) error {
 				s.Meta.OtherNight = checkNilStringS(vt["otherNight"])
 			} else {
 				if len(vt) == 1 {
-					s.OriginalCharacterIds = append(s.OriginalCharacterIds, strings.ReplaceAll(vt["id"].(string), "_", ""))
+					s.OriginalCharacterIds = append(s.OriginalCharacterIds, normaliseId(vt["id"].(string)))
 				} else {
 					role, err := NewRole(vt)
 					if err != nil {
