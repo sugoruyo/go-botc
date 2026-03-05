@@ -197,7 +197,7 @@ func NewRole(m map[string]any) (Role, error) {
 	if err != nil {
 		return r, err
 	}
-	r.Name = name
+	r.Name = strings.TrimSuffix(name, " RAH")
 
 	edition, err := extractRoleEdition(m)
 	if err != nil {
@@ -306,7 +306,7 @@ func extractRoleId(m map[string]any) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	extracted, _ = strings.CutSuffix(extracted, "_rah")
+	extracted = strings.TrimSuffix(extracted, "_rah")
 	return extracted, nil
 }
 
